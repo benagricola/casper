@@ -55,7 +55,7 @@ newModel = new Test
 		[ "element-exists", "#log_in_out_button", "Checking for existence of login button" ]
 		[ "fill-form",".login .area form", 
 			SQ_LOGIN_USERNAME: 'selenium_user' 
-			SQ_LOGIN_PASSWORD: '2=:U8:!zD;4{"*+' 
+			SQ_LOGIN_PASSWORD: '' 
 		, false ]
 		#[ "capture" ]
 		[ "click", "#log_in_out_button" ]
