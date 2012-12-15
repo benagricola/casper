@@ -1,4 +1,5 @@
 phantom.injectJs "socket.io.min.js"
+env = require('system').env
 
 class CasperNode
 	
@@ -7,7 +8,7 @@ class CasperNode
 	maxRetryAttempts: 5
 
 	constructor: (host,port,password) ->
-		@socketUri = "http://#{host}:#{port}"
+		@socketUri = "#{host}:#{port}"
 		@password = password
 		@connect()
 
@@ -90,5 +91,6 @@ class CasperNode
 	error: (msg) ->
 		@log('error',msg)
 
-node = new CasperNode 'localhost', 8080, 'acjB9FYSJa8MTeOwQqlgFrrMXUMklo9u8V0n6wh0'
+console.log env['HUB_URL']
+node = new CasperNode env['HUB_URL'] or 'localhost', env['HUB_PORT'] or 8080, env['HUB_PASS'] or ''
 node.info 'Initiated new CasperNode'

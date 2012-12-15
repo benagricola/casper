@@ -23,10 +23,10 @@ class @_.CasperTest extends Casper
 		@options.onTimeout = (timeout) ->
 			@log "Script timeout of #{timeout}ms reached", "error"
 
-		@sock.on 'run.abort', () ->
-			@test.done()
-			phantom.clearCookies()
-			
+		@sock.on 'run.abort', () =>
+			@log "Aborting (exiting) on run.abort","error"
+			phantom.exit(1) # Rely on something to restart the test clients
+
 		@on 'run.start', (args) ->
 			@sock.emit 'run.start', uid: @uid
 
@@ -103,9 +103,13 @@ class @_.CasperTest extends Casper
 					return @getCurrentUrl().split(':')[0] == opts[0]
 				,opts[1..]...
 
-			when 'assert-protocol'
+			when 'is-protocol'
 				@then () ->
 					@test.assertTrue @getCurrentUrl().split(':')[0] == opts[0], opts[1..]
+
+			when 'is-status'
+				@then () ->
+					@test.assertHttpStatus opts...
 
 			when 'wait-for-element-visible'
 				@waitUntilVisible opts...	

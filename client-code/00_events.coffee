@@ -20,6 +20,6 @@
 		@test.done()
 		phantom.clearCookies()
 
-	cb() # When server receives this, it should lock the test until we're done (or timeout)
+	cb(true) # When server receives this, it should lock the test until we're done (or timeout)
 
 		

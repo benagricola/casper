@@ -34,31 +34,40 @@ module.exports = (app) ->
 			testObject.uid = uuid.v4()
 
 			w.debug "Emitting run request: UID #{testObject.uid}"
-			targetSock.emit 'run.request',testObject, () ->
+			targetSock.emit 'run.request',testObject, (result) ->
 				w.debug "Confirmed run request started"
 
 				# This callback occurs when the test run start is acknowledged
 				test.set(locked: true).save()
 
-				# setTimeout and fire a run.abort if it runs too long
-				
-				# When test is finally completed, re-add the sock to the rr list
-				targetSock.on 'run.complete', (status) ->
+				# TODO setTimeout and fire a run.abort if it runs too long
+				abortTimer = setTimeout () ->
+					targetSock.emit 'run.abort'
 					test.set(locked: false).save()
 					socketRR.push targetSockId
+					return
+				,app.get 'test-timeout'
+
+				# When test is finally completed, re-add the sock to the rr list
+				targetSock.removeAllListeners('run.complete')
+				.on 'run.complete', (status) ->
+					clearTimeout abortTimer
+					test.set(locked: false).save()
+					socketRR.push targetSockId
+					return
+				return
 		return
 
 	# Listen for the test:run event
 	app.on 'test:run', (test) ->
-		return runTest args
+		return runTest test
 
-		
 	io.of('/test').authorization (data,cb) ->
 		connectPassword = data?.query?.pass
-		if connectPassword == app.get 'casperPassword'
+		if connectPassword == app.get 'casper-password'
 			cb '',true
 		else
-				cb 'Password given does not match',false
+			cb 'Password given does not match',false
 		return
 
 	io.of('/test').on 'connection', (socket) ->
@@ -84,6 +93,7 @@ module.exports = (app) ->
 					if not bootstrapped or err
 						socket.set 'bootstrapped', true, () ->
 							w.debug "Test client pool is: #{socketRR.length}"
+					return
 				return
 			return
 		return

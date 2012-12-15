@@ -24,8 +24,10 @@ module.exports = (app) ->
 		return
 
 	app.set 'logger', logger
-	app.set 'casperPassword', 'acjB9FYSJa8MTeOwQqlgFrrMXUMklo9u8V0n6wh0'
+	app.set 'casper-password', 'acjB9FYSJa8MTeOwQqlgFrrMXUMklo9u8V0n6wh0'
+	app.set 'test-timeout', 120000
 	app.set 'client-code-dir', './client-code'
+	
 	app.configure 'development', () ->
 		app.use express.errorHandler
 			'dumpExceptions': true

@@ -30,6 +30,11 @@ Test.find (err,tests) ->
 	# For each test, add a new interval to run the tests
 	for test in tests
 		do (test) ->
+			
+			# Since we're restarting, it's safe to unlock all tests
+			# The test clients should've already finished / exited.
+			test.set(locked: false).save()
+
 			setInterval (args...) ->
 				app.emit 'test:run',args...
 			,test.interval,test
