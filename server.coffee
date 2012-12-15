@@ -19,50 +19,50 @@ require('./lib/test-sockets')(app)
 
 # Load test client data management
 require('./config/clientdata')(app)
-	
+    
 require('./models')(app) 
 
 # Get all stored tests and set up run intervals for them
 Test = mongoose.model 'Test'
 
 Test.find (err,tests) ->
-	return console.log err if err
-	# For each test, add a new interval to run the tests
-	for test in tests
-		do (test) ->
-			
-			# Since we're restarting, it's safe to unlock all tests
-			# The test clients should've already finished / exited.
-			test.set(locked: false).save()
+    return console.log err if err
+    # For each test, add a new interval to run the tests
+    for test in tests
+        do (test) ->
+            
+            # Since we're restarting, it's safe to unlock all tests
+            # The test clients should've already finished / exited.
+            test.set(locked: false).save()
 
-			setInterval (args...) ->
-				app.emit 'test:run',args...
-			,test.interval,test
-			return
+            setInterval (args...) ->
+                app.emit 'test:run',args...
+            ,test.interval,test
+            return
 
 
 
 ###Test = mongoose.model 'Test'
 newModel = new Test
-	name: 'HFM Week Login Test 2'
-	description: 'Login test'
-	steps: [
-		[ "start", "http://www.hfmweek.com" ]
-		[ "element-exists", "li.login > span", "Checking for existence of login area" ]
-		[ "click", "li.login > span" ]
-		[ "wait-for-element-visible",".login .area"  ]
-		[ "element-visible", "#log_in_out_button","Checking for login button visibility" ]
-		[ "element-exists", "#log_in_out_button", "Checking for existence of login button" ]
-		[ "fill-form",".login .area form", 
-			SQ_LOGIN_USERNAME: 'selenium_user' 
-			SQ_LOGIN_PASSWORD: '' 
-		, false ]
-		#[ "capture" ]
-		[ "click", "#log_in_out_button" ]
-		[ "wait-for-text", "You are currently logged in as" ]
-		[ "element-has-text", "li.login > span", "Log out", "Checking that login button is now log out" ]
-	]
+    name: 'HFM Week Login Test 2'
+    description: 'Login test'
+    steps: [
+        [ "start", "http://www.hfmweek.com" ]
+        [ "element-exists", "li.login > span", "Checking for existence of login area" ]
+        [ "click", "li.login > span" ]
+        [ "wait-for-element-visible",".login .area"  ]
+        [ "element-visible", "#log_in_out_button","Checking for login button visibility" ]
+        [ "element-exists", "#log_in_out_button", "Checking for existence of login button" ]
+        [ "fill-form",".login .area form", 
+            SQ_LOGIN_USERNAME: 'selenium_user' 
+            SQ_LOGIN_PASSWORD: '' 
+        , false ]
+        #[ "capture" ]
+        [ "click", "#log_in_out_button" ]
+        [ "wait-for-text", "You are currently logged in as" ]
+        [ "element-has-text", "li.login > span", "Log out", "Checking that login button is now log out" ]
+    ]
 
 newModel.save (err,dbEntry) ->
-	console.log(err,dbEntry)
+    console.log(err,dbEntry)
 console.log()###

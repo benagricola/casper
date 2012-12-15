@@ -4,10 +4,10 @@ cs = require 'coffee-script'
 uuid = require 'node-uuid'
 
 export.timedEvent = (event,args,delay,app) ->
-	w = app.get 'logger'
+    w = app.get 'logger'
 
-	_emitEvent = (event) ->
-		app.emit(event,args)
-	setInterval _emitEvent, delay
+    _emitEvent = (event) ->
+        app.emit(event,args)
+    setInterval _emitEvent, delay
 
-	return
+    return
