@@ -91,6 +91,5 @@ class CasperNode
     error: (msg) ->
         @log('error',msg)
 
-console.log env['HUB_URL']
 node = new CasperNode env['HUB_URL'] or 'localhost', env['HUB_PORT'] or 8080, env['HUB_PASS'] or ''
 node.info 'Initiated new CasperNode'

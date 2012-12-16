@@ -9,7 +9,7 @@ class @_.CasperTest extends Casper
 
     constructor: (options) ->
         @sock = options.sock
-        @uid = options.uid
+        @_id = options._id
         options.sock = undefined
         super options
 
@@ -28,31 +28,46 @@ class @_.CasperTest extends Casper
             phantom.exit(1) # Rely on something to restart the test clients
 
         @on 'run.start', (args) ->
-            @sock.emit 'run.start', uid: @uid
+            @sock.emit 'run.start', run: @_id
 
         @on 'run.complete', (args) ->
             @clear()
-            @sock.emit 'run.complete', uid: @uid, time: @result.time
+            @sock.emit 'run.complete', run: @_id, time: @result.time
 
         @on 'step.start', (args) ->
             @currentStepResults = []
-            @sock.emit 'step.start',
-                uid: @uid, id: @currentStep(), name: @currentStepName(), time: @currentTime()
+            @sock.emit 'run.msg',
+                type: 'step.start'
+                run: @_id
+                step: @currentStep()
+                stepname: @currentStepName()
+                time: @currentTime()
 
         @on 'step.complete', (args) ->  
-            @sock.emit 'step.complete', 
-                uid: @uid, id: @currentStep(), name: @currentStepName(), time: @currentTime(), results: @currentStepResults
+            @sock.emit 'run.msg', 
+                type: 'step.complete'
+                run: @_id
+                step: @currentStep()
+                stepname: @currentStepName()
+                time: @currentTime()
+                results: @currentStepResults
 
         @on 'step.timeout', (args) ->
-            console.log 'Step timeout occurred'
+            @sock.emit 'run.msg', 
+                type: 'step.timeout'
+                run: @_id
+                step: @currentStep()
+                stepname: @currentStepName()
+                time: @currentTime()
+                results: @currentStepResults
 
         @test.on 'success', (result) =>
             @currentStepResults.push result
-            @sock.emit 'test.success', uid: @uid, result: result
+            @sock.emit 'run.msg', type: 'test.success', run: @_id, result: result
 
         @test.on 'fail', (result) =>
             @currentStepResults.push result
-            @sock.emit 'test.fail', uid: @uid, result: result
+            @sock.emit 'run.msg', type: 'test.fail', run: @_id, result: result
 
     currentTime: () ->
         return new Date().getTime() - this.startTime

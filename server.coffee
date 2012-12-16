@@ -13,14 +13,15 @@ server = require('./lib/socketbind')(app)
 # Initialise websockets
 require('./config/sockets')(server,app)
 
+# Load Models
+require('./models')(app) 
+
 # Load socket functionality
 require('./lib/log-sockets')(app) 
 require('./lib/test-sockets')(app) 
 
 # Load test client data management
 require('./config/clientdata')(app)
-    
-require('./models')(app) 
 
 # Get all stored tests and set up run intervals for them
 Test = mongoose.model 'Test'

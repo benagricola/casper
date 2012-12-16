@@ -1,0 +1,18 @@
+!!! 5
+html
+	head
+		meta(charset='UTF-8')
+
+		title #{appName}
+
+		block headcss
+			link(rel='stylesheet', href='/css/bootstrap.min.css')
+			link(rel='stylesheet', href='/css/bootstrap-responsive.min.css')
+			link(rel='stylesheet', href='/css/style.css')
+
+		block headjs
+
+			// Custom code
+			script(type='text/javascript', data-main='/js/main', src='js/lib/require.js')
+	body
+				

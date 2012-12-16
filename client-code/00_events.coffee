@@ -2,7 +2,7 @@
 
 @sock.on 'run.request', (options,cb) => 
     test = new @_.CasperTest
-        uid: options.uid
+        _id: options._id
         sock: @sock
         verbose: true
         exitOnError: false
@@ -15,11 +15,13 @@
         @log "Adding step: #{step[0]}", "info"
         test.addStep step...
 
+    cb(true) # When server receives this, it should lock the test until we're done (or timeout)
+
+    # Start the test run
     test.run () ->
         @log "Test run completed", "info"
         @test.done()
         phantom.clearCookies()
 
-    cb(true) # When server receives this, it should lock the test until we're done (or timeout)
 
         
